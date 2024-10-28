@@ -1,0 +1,24 @@
+version: '${version}' # Do not change!
+
+token: "discord-bot-token"
+guild-id: "guild-id"
+
+database:
+  type: "MONGO"
+  uri: "database URI"
+
+redis:
+  host: "127.0.0.1"
+  port: 6368
+  password: "password"
+  channel: "slave:updates"
+
+categories:
+  tickets: "channel-id"
+
+channels:
+  ticket-logs: "channel-id"
+
+roles:
+  developer: "role-id"
+  support: "role-id"
