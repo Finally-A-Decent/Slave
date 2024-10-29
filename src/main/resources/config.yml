@@ -1,7 +1,7 @@
 version: '${version}' # Do not change!
 
 token: "discord-bot-token"
-guild-id: "guild-id"
+guild-id: 123123
 
 database:
   type: "MONGO"
@@ -14,11 +14,11 @@ redis:
   channel: "slave:updates"
 
 categories:
-  tickets: "channel-id"
+  tickets: 123123
 
 channels:
-  ticket-logs: "channel-id"
+  ticket-logs: 123123
 
 roles:
-  developer: "role-id"
-  support: "role-id"
+  developer: 1231123
+  support: 123123

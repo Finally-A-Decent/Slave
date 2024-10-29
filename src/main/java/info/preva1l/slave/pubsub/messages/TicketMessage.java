@@ -1,9 +1,7 @@
 package info.preva1l.slave.pubsub.messages;
 
 import com.google.gson.annotations.Expose;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 public class TicketMessage extends TicketAction {

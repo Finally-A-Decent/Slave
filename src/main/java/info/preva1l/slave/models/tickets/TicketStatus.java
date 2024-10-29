@@ -8,8 +8,13 @@ import lombok.Getter;
 public enum TicketStatus {
     OPEN("Open"),
     CLOSED("Closed"),
-    LOCKED("Locked")
+    LOCKED("Locked"),
+    ESCALATED("Escalated")
     ;
 
     private final String friendly;
+
+    public boolean isOpen() {
+        return this == OPEN || this == ESCALATED;
+    }
 }

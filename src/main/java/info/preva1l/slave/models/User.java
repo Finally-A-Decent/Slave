@@ -1,6 +1,7 @@
 package info.preva1l.slave.models;
 
 import info.preva1l.slave.Slave;
+import info.preva1l.slave.persistence.DatabaseObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.Member;
@@ -10,7 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 @AllArgsConstructor
-public class User {
+public class User implements DatabaseObject {
     private final long id;
     private final String name;
     private final String email;

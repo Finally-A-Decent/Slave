@@ -2,7 +2,11 @@ package info.preva1l.slave;
 
 import info.preva1l.slave.commands.Cmd;
 import info.preva1l.slave.commands.PanelCommand;
+import info.preva1l.slave.managers.PersistenceManager;
+import info.preva1l.slave.managers.TicketManager;
+import info.preva1l.slave.managers.UserManager;
 import info.preva1l.slave.modals.TicketModal;
+import info.preva1l.slave.models.tickets.Ticket;
 import info.preva1l.slave.panels.TicketPanel;
 import info.preva1l.slave.pubsub.Broker;
 import info.preva1l.slave.pubsub.RedisBroker;
@@ -13,8 +17,10 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.internal.utils.config.sharding.ShardingSessionConfig;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +35,7 @@ public final class Slave {
     @Getter private final BasicConfig config;
     @Getter private Broker broker;
 
-    public Slave() throws InterruptedException {
+    public Slave() {
         instance = this;
         this.config = new BasicConfig(this, "config.yml");
     }
@@ -41,11 +47,17 @@ public final class Slave {
                 .setActivity(Activity.of(Activity.ActivityType.WATCHING, "The Console"))
                 .setToken(config.getString("token"))
                 .setSessionController(ShardingSessionConfig.getDefault().getSessionController())
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .build();
 
         jda.awaitReady();
+
+        PersistenceManager.getInstance();
         this.broker = new RedisBroker(this);
         broker.connect();
+
+        getJda().getUsers().forEach(user -> UserManager.getInstance().cacheDiscordUser(user));
+        PersistenceManager.getInstance().getAll(Ticket.class).join().forEach(ticket -> TicketManager.getInstance().cacheTicket(ticket));
 
         Stream.of(
                 new PanelCommand()
@@ -53,7 +65,9 @@ public final class Slave {
 
         Stream.of(
                 new TicketPanel(),
-                new TicketModal()
+                new TicketModal(),
+                UserManager.getInstance(),
+                TicketManager.getInstance()
         ).forEach(getJda()::addEventListener);
 
         Logger.info("Bot Started!");
@@ -65,6 +79,14 @@ public final class Slave {
 
     public Category getTicketCategory() {
         return getGuild().getCategoryById(config.getLong("categories.tickets"));
+    }
+
+    public Role getSupportRole() {
+        return getGuild().getRoleById(config.getLong("roles.support"));
+    }
+
+    public Role getDevRole() {
+        return getGuild().getRoleById(config.getLong("roles.developer"));
     }
 
     public void registerCommand(Cmd command) {

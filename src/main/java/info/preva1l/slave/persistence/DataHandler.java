@@ -21,7 +21,7 @@ public interface DataHandler {
      * @param id the id of the object.
      * @return an optional of the object, an empty optional if the object was not found.
      */
-    <T extends DatabaseObject> Optional<T> get(Class<T> clazz, int id);
+    <T extends DatabaseObject> Optional<T> get(Class<T> clazz, long id);
 
     /**
      * Search for an object of a certain class and matching the name.

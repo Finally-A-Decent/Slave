@@ -9,16 +9,17 @@ import info.preva1l.slave.persistence.Dao;
 import info.preva1l.slave.persistence.DatabaseHandler;
 import info.preva1l.slave.persistence.DatabaseObject;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.bson.UuidRepresentation;
 
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class MongoHandler implements DatabaseHandler {
     @Getter private boolean connected = false;
-    private final Slave slave;
+    private final Slave slave = Slave.getInstance();
     private MongoClient client;
 
     @Override
@@ -28,6 +29,7 @@ public class MongoHandler implements DatabaseHandler {
                 .uuidRepresentation(UuidRepresentation.STANDARD)
                 .build();
         client = MongoClients.create(settings);
+        connected = true;
     }
 
     @Override
@@ -61,7 +63,7 @@ public class MongoHandler implements DatabaseHandler {
      * @return an optional of the object, an empty optional if the object was not found.
      */
     @Override
-    public <T extends DatabaseObject> Optional<T> get(Class<T> clazz, int id) {
+    public <T extends DatabaseObject> Optional<T> get(Class<T> clazz, long id) {
         return Optional.empty();
     }
 
